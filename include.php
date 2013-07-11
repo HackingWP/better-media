@@ -33,8 +33,15 @@ THE SOFTWARE.
 
 // Require dependencies
 require_once 'library/global.php';
-require_once 'vendor/attitude/function-get_file_extension/function-get_file_extension.php';
-require_once 'vendor/attitude/function-get_file_filename/function-get_file_filename.php';
+
+if (!function_exists('get_file_extension')) {
+    require_once 'vendor/attitude/function-get_file_extension/function-get_file_extension.php';
+}
+
+if (!function_exists('get_file_filename')) {
+    require_once 'vendor/attitude/function-get_file_filename/function-get_file_filename.php';
+}
+
 require_once 'library/BetterWPMedia.php';
 require_once 'library/BetterWPMediaSizes.php';
 
