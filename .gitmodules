@@ -1,0 +1,6 @@
+[submodule "vendor/attitude/function-get_file_filename"]
+	path = vendor/attitude/function-get_file_filename
+	url = https://gist.github.com/5885222.git
+[submodule "vendor/attitude/function-get_file_extension"]
+	path = vendor/attitude/function-get_file_extension
+	url = https://gist.github.com/5885205.git

@@ -1,0 +1,119 @@
+<script>
+var pluginURL = '{{{pluginURL}}}';
+
+var MediaSizesApp = angular.module('MediaSizesApp', ['restangular']).config(function(RestangularProvider) {
+    RestangularProvider.setBaseUrl(pluginURL + '?rest=');
+});
+
+MediaSizesApp.directive('ngModelOnblur', function() {
+    return {
+        restrict: 'A',
+        require: 'ngModel',
+        link: function(scope, elm, attr, ngModelCtrl) {
+            if (attr.type === 'radio' || attr.type === 'checkbox') return;
+
+            elm.unbind('input').unbind('keydown').unbind('change');
+            elm.bind('blur', function() {
+                scope.$apply(function() {
+                    ngModelCtrl.$setViewValue(elm.val());
+                });
+            });
+        }
+    };
+});
+
+MediaSizesApp.controller('mediaSizesCtrl', ['$scope', 'Restangular', function($scope, Restangular) {
+        $scope.mediaSizes = {{{sizes}}};
+
+        var mediaSizes = Restangular.all('media-sizes');
+
+        $scope.mediaSizes = mediaSizes.getList();
+
+        $scope.addMediaSize = function() {
+            mediaSizes.post($scope.newMediaSize).then(function(response) {
+                // Clean them all
+                $scope.mediaSizes = mediaSizes.getList();
+                $scope.newMediaSize   = {};
+            }, function() {
+                console.log($scope.newMediaSize);
+                alert('Error saving data');
+            });
+        }
+
+        $scope.update = function(idx) {
+            console.log($scope.mediaSizes.$$v[idx]);
+
+            // $scope.mediaSizes.$$v[idx]
+            mediaSizes.one($scope.mediaSizes.$$v[idx].name).put().then(function(response) {
+                // Clean them all
+                $scope.mediaSizes = mediaSizes.getList();
+            }, function() {
+                console.log($scope.newMediaSize);
+                alert('Error updating size');
+            });
+        };
+
+        $scope.delete = function(idx) {
+            mediaSizes.one($scope.mediaSizes.$$v[idx].name).remove().then(function(response) {
+                // Clean them all
+                $scope.mediaSizes = mediaSizes.getList();
+            }, function() {
+                console.log($scope.newMediaSize);
+                alert('Error removing size');
+            });
+        }
+    }
+]);
+</script>
+<div id="other-media-sizes" ng-app="MediaSizesApp">
+    <div ng-controller="mediaSizesCtrl">
+        <table class="media-sizes" cellspacing="0">
+            <thead>
+                <tr>
+                    <th class="media-size-slug">Size slug</th>
+                    <th class="media-size-dimmension">Width</th>
+                    <th class="media-size-dimmension">Height</th>
+                    <th class="media-size-crop">Crop Image</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="mediaSize in mediaSizes">
+                    <td><input ng-model="mediaSize" ng-change="update($index)" ng-model-onblur type="text"     value="{{mediaSize.name}}"   placeholder="size_key"  pattern="[a-z_]{1,}" /></td>
+                    <td><input ng-model="mediaSize" ng-change="update($index)" ng-model-onblur type="number"   value="{{mediaSize.width}}"  min="0" step="1"        placeholder="480"   class="small-text"/></td>
+                    <td><input ng-model="mediaSize" ng-change="update($index)" ng-model-onblur type="number"   value="{{mediaSize.height}}" min="0" step="1"        placeholder="320"   class="small-text"/></td>
+                    <td><input ng-model="mediaSize" ng-change="update($index)" ng-model-onblur type="checkbox" ng-model="mediaSize.crop" /> <a href="#" class="button alignright" ng-click="delete($index)">-</a></td>
+                </tr>
+                <tr>
+                    <td><input ng-model="newMediaSize.name"   type="text"     placeholder="new_size_key"  pattern="[a-z_]{1,}" /></td>
+                    <td><input ng-model="newMediaSize.width"  type="number"   min="0" step="1"        placeholder="480"   class="small-text"/></td>
+                    <td><input ng-model="newMediaSize.height" type="number"   min="0" step="1"        placeholder="320"   class="small-text"/></td>
+                    <td><input ng-model="newMediaSize.crop"   type="checkbox" /></td>
+                </tr>
+                <tr class="media-size-submit">
+                    <td colspan="4"><a href="#" class="button button-primary" ng-click="addMediaSize()">+ Add New</a></td>
+            </tbody>
+        </table>
+    </div>
+</div>
+<style>
+th.media-size-slug       { width: 175px }
+th.media-size-dimmension { width: 65px }
+th.media-size-crop       { width: 65px }
+
+table.media-sizes th {
+    padding-top: 0;
+}
+table.media-sizes td {
+    border-top: 1px solid #e5e5e5;
+}
+
+table.media-sizes tr.media-size-submit td {
+    padding: 0;
+    border-top: 0;
+}
+
+tr.media-size-submit .button {
+    text-align: center;
+    width: 100%;
+}
+</style>
