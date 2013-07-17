@@ -38,11 +38,7 @@ class BetterWPMedia
         $this->sizes = BetterWPMediaSizes::instance();
 
         // Register media sizes
-        add_action('init', function() {
-            foreach ($this->sizes->get_sizes() as $name => $data) {
-                add_image_size($name, $data['width'], $data['height'], $data['crop']);
-            }
-        });
+        add_action('init', array($this, 'register_media_sizes'));
 
         if (is_admin()) {
             add_action('activate_plugin',   array($this, 'activate'));
@@ -60,6 +56,13 @@ class BetterWPMedia
         }
 
         add_filter('wp_get_attachment_metadata', array(__CLASS__,'generate_and_clean'), 10, 2);
+    }
+
+    public function register_media_sizes()
+    {
+        foreach ($this->sizes->get_sizes() as $name => $data) {
+            add_image_size($name, $data['width'], $data['height'], $data['crop']);
+        }
     }
 
     /**
