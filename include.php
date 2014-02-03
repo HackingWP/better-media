@@ -4,7 +4,7 @@
 Plugin Name:    Better WordPress Media
 Plugin URI:     http://www.attitude.sk
 Description:    Tweak WordPress Media
-Version:        v0.1.0
+Version:        v0.1.1
 Author:         Martin Adamko
 Author URI:     http://www.attitude.sk
 License:        The MIT License (MIT)
