@@ -497,6 +497,10 @@ class BetterWPMedia
     {
         global $_wp_additional_image_sizes;
 
+        if (!isset($_wp_additional_image_sizes)) {
+            $_wp_additional_image_sizes = array();
+        }
+
         if (!is_array($data) || !isset($data['sizes']) || empty($attachment_id)) {
             return $data;
         }
@@ -573,8 +577,6 @@ class BetterWPMedia
 
                     $dest_file = $editor->generate_filename($suffix);
                     $saved = $editor->save( $dest_file );
-
-                    $editor->__destruct();
 
                     if (is_wp_error($saved)) {
                         // Something went terribly wrong, no more trying with other thumbs
